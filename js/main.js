@@ -54,6 +54,9 @@ class BrainViewer {
             this.brainModel = new BrainModel(this.sceneManager.scene);
             await this.brainModel.load('models/brain.glb');
             
+            // Store original position for transform reset
+            this.brainModel.originalPosition = this.brainModel.model.position.clone();
+            
             // Initialize grid helper based on model size (pass actual radius)
             const modelRadius = this.brainModel.getBoundingSphere().radius;
             this.gridHelper = new GridHelper(this.sceneManager.scene);
@@ -65,6 +68,10 @@ class BrainViewer {
             // Initialize UI controller
             this.uiController = new UIController(this);
             this.uiController.setBaseDistance(this.optimalDistance);
+            
+            // Store original scale and materials for reset functionality
+            this.uiController.setOriginalScale(this.brainModel.model.scale.x);
+            this.uiController.storeOriginalMaterials();
             
             // Update model info display
             const scaleInfo = this.gridHelper.getScaleInfo(modelRadius * 2);

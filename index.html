@@ -15,84 +15,228 @@
             <p class="hint">Left click + drag to rotate<br>Right click + drag to pan<br>Scroll to zoom</p>
         </div>
         
-        <div class="panel-section">
-            <h3>Camera Controls</h3>
-            <div class="control-group">
-                <label>Rotation X</label>
-                <input type="range" id="rotation-x" min="-180" max="180" value="0">
-                <span class="value-display" id="rotation-x-value">0°</span>
-            </div>
-            <div class="control-group">
-                <label>Rotation Y</label>
-                <input type="range" id="rotation-y" min="-180" max="180" value="0">
-                <span class="value-display" id="rotation-y-value">0°</span>
-            </div>
-            <div class="control-group">
-                <label>Rotation Z</label>
-                <input type="range" id="rotation-z" min="-180" max="180" value="0">
-                <span class="value-display" id="rotation-z-value">0°</span>
-            </div>
-            <div class="control-group">
-                <label>Zoom</label>
-                <input type="range" id="zoom" min="10" max="200" value="100">
-                <span class="value-display" id="zoom-value">100%</span>
-            </div>
-            <div class="control-group">
-                <label>Pan X</label>
-                <input type="range" id="pan-x" min="-100" max="100" value="0">
-                <span class="value-display" id="pan-x-value">0</span>
-            </div>
-            <div class="control-group">
-                <label>Pan Y</label>
-                <input type="range" id="pan-y" min="-100" max="100" value="0">
-                <span class="value-display" id="pan-y-value">0</span>
-            </div>
-            <button id="reset-camera" class="btn-secondary">Reset Camera</button>
-        </div>
-        
-        <div class="panel-section">
-            <h3>Standard Views</h3>
-            <div class="view-buttons">
-                <button id="view-front" class="view-btn">Front</button>
-                <button id="view-back" class="view-btn">Back</button>
-                <button id="view-left" class="view-btn">Left</button>
-                <button id="view-right" class="view-btn">Right</button>
-                <button id="view-top" class="view-btn">Top</button>
-                <button id="view-bottom" class="view-btn">Bottom</button>
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="camera-controls">▼ Camera Controls</h3>
+            <div id="camera-controls" class="section-content">
+                <div class="control-group">
+                    <label>Rotation X</label>
+                    <input type="range" id="rotation-x" min="-180" max="180" value="0">
+                    <span class="value-display" id="rotation-x-value">0°</span>
+                </div>
+                <div class="control-group">
+                    <label>Rotation Y</label>
+                    <input type="range" id="rotation-y" min="-180" max="180" value="0">
+                    <span class="value-display" id="rotation-y-value">0°</span>
+                </div>
+                <div class="control-group">
+                    <label>Rotation Z</label>
+                    <input type="range" id="rotation-z" min="-180" max="180" value="0">
+                    <span class="value-display" id="rotation-z-value">0°</span>
+                </div>
+                <div class="control-group">
+                    <label>Zoom</label>
+                    <input type="range" id="zoom" min="10" max="200" value="100">
+                    <span class="value-display" id="zoom-value">100%</span>
+                </div>
+                <div class="control-group">
+                    <label>Pan X</label>
+                    <input type="range" id="pan-x" min="-100" max="100" value="0">
+                    <span class="value-display" id="pan-x-value">0</span>
+                </div>
+                <div class="control-group">
+                    <label>Pan Y</label>
+                    <input type="range" id="pan-y" min="-100" max="100" value="0">
+                    <span class="value-display" id="pan-y-value">0</span>
+                </div>
+                <button id="reset-camera" class="btn-secondary">Reset Camera</button>
             </div>
         </div>
         
-        <div class="panel-section">
-            <h3>Display Options</h3>
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" id="show-axes" checked>
-                    Show Axes
-                </label>
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="view-controls">▼ Standard Views</h3>
+            <div id="view-controls" class="section-content">
+                <div class="view-buttons">
+                    <button id="view-front" class="view-btn">Front</button>
+                    <button id="view-back" class="view-btn">Back</button>
+                    <button id="view-left" class="view-btn">Left</button>
+                    <button id="view-right" class="view-btn">Right</button>
+                    <button id="view-top" class="view-btn">Top</button>
+                    <button id="view-bottom" class="view-btn">Bottom</button>
+                </div>
             </div>
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" id="show-grid-xy">
-                    XY Grid (Coronal)
-                </label>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="object-controls">▼ Object Transform</h3>
+            <div id="object-controls" class="section-content">
+                <div class="control-group">
+                    <label>Scale</label>
+                    <input type="range" id="model-scale" min="10" max="200" value="100">
+                    <span class="value-display" id="model-scale-value">100%</span>
+                </div>
+                <div class="control-group">
+                    <label>Position X</label>
+                    <input type="range" id="model-pos-x" min="-100" max="100" value="0">
+                    <span class="value-display" id="model-pos-x-value">0</span>
+                </div>
+                <div class="control-group">
+                    <label>Position Y</label>
+                    <input type="range" id="model-pos-y" min="-100" max="100" value="0">
+                    <span class="value-display" id="model-pos-y-value">0</span>
+                </div>
+                <div class="control-group">
+                    <label>Position Z</label>
+                    <input type="range" id="model-pos-z" min="-100" max="100" value="0">
+                    <span class="value-display" id="model-pos-z-value">0</span>
+                </div>
+                <button id="reset-transform" class="btn-secondary">Reset Transform</button>
             </div>
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" id="show-grid-xz" checked>
-                    XZ Grid (Axial)
-                </label>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="display-controls">▼ Display Options</h3>
+            <div id="display-controls" class="section-content">
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-axes" checked>
+                        Show Axes
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-grid-xy">
+                        XY Grid (Coronal)
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-grid-xz" checked>
+                        XZ Grid (Axial)
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-grid-yz">
+                        YZ Grid (Sagittal)
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="auto-rotate">
+                        Auto Rotate
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-wireframe">
+                        Wireframe Overlay
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-bounding-box">
+                        Bounding Box
+                    </label>
+                </div>
             </div>
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" id="show-grid-yz">
-                    YZ Grid (Sagittal)
-                </label>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="lighting-controls">▼ Lighting</h3>
+            <div id="lighting-controls" class="section-content">
+                <div class="control-group">
+                    <label>Preset</label>
+                    <select id="lighting-preset" class="control-select">
+                        <option value="default">Default</option>
+                        <option value="bright">Bright</option>
+                        <option value="dramatic">Dramatic</option>
+                        <option value="medical">Medical</option>
+                        <option value="soft">Soft</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Ambient Intensity</label>
+                    <input type="range" id="ambient-intensity" min="0" max="100" value="40">
+                    <span class="value-display" id="ambient-intensity-value">40%</span>
+                </div>
+                <div class="control-group">
+                    <label>Main Light Intensity</label>
+                    <input type="range" id="directional-intensity" min="0" max="150" value="80">
+                    <span class="value-display" id="directional-intensity-value">80%</span>
+                </div>
+                <div class="control-group">
+                    <label>Light Angle H</label>
+                    <input type="range" id="light-angle-h" min="0" max="360" value="45">
+                    <span class="value-display" id="light-angle-h-value">45°</span>
+                </div>
+                <div class="control-group">
+                    <label>Light Angle V</label>
+                    <input type="range" id="light-angle-v" min="-90" max="90" value="45">
+                    <span class="value-display" id="light-angle-v-value">45°</span>
+                </div>
+                <div class="control-group">
+                    <label>Fill Light</label>
+                    <input type="range" id="fill-intensity" min="0" max="100" value="30">
+                    <span class="value-display" id="fill-intensity-value">30%</span>
+                </div>
+                <div class="control-group">
+                    <label>Rim Light</label>
+                    <input type="range" id="rim-intensity" min="0" max="100" value="40">
+                    <span class="value-display" id="rim-intensity-value">40%</span>
+                </div>
+                <div class="control-group">
+                    <label>Light Color</label>
+                    <input type="color" id="light-color" value="#ffffff" class="color-picker">
+                </div>
             </div>
-            <div class="checkbox-group">
-                <label>
-                    <input type="checkbox" id="auto-rotate">
-                    Auto Rotate
-                </label>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="material-controls">▼ Material & Texture</h3>
+            <div id="material-controls" class="section-content">
+                <div class="control-group">
+                    <label>Material Preset</label>
+                    <select id="material-preset" class="control-select">
+                        <option value="original">Original</option>
+                        <option value="standard">Standard</option>
+                        <option value="glossy">Glossy</option>
+                        <option value="matte">Matte</option>
+                        <option value="xray">X-Ray</option>
+                        <option value="wireframe">Wireframe Only</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Base Color</label>
+                    <input type="color" id="material-color" value="#ffccaa" class="color-picker">
+                </div>
+                <div class="control-group">
+                    <label>Roughness</label>
+                    <input type="range" id="material-roughness" min="0" max="100" value="70">
+                    <span class="value-display" id="material-roughness-value">70%</span>
+                </div>
+                <div class="control-group">
+                    <label>Metalness</label>
+                    <input type="range" id="material-metalness" min="0" max="100" value="10">
+                    <span class="value-display" id="material-metalness-value">10%</span>
+                </div>
+                <div class="control-group">
+                    <label>Opacity</label>
+                    <input type="range" id="material-opacity" min="10" max="100" value="100">
+                    <span class="value-display" id="material-opacity-value">100%</span>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="double-sided" checked>
+                        Double Sided
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="flat-shading">
+                        Flat Shading
+                    </label>
+                </div>
+                <button id="reset-material" class="btn-secondary">Reset Material</button>
             </div>
         </div>
         

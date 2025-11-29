@@ -100,6 +100,12 @@ export class LightingManager {
                 directional: { intensity: 0.9 },
                 fill: { intensity: 0.4 },
                 rim: { intensity: 0.3 }
+            },
+            soft: {
+                ambient: { intensity: 0.5, color: 0xffffff },
+                directional: { intensity: 0.6 },
+                fill: { intensity: 0.4 },
+                rim: { intensity: 0.2 }
             }
         };
         
@@ -120,6 +126,29 @@ export class LightingManager {
         
         if (preset.rim && this.lights.rim) {
             this.lights.rim.intensity = preset.rim.intensity;
+        }
+    }
+    
+    // Methods for fill and rim light control
+    
+    setFillIntensity(intensity) {
+        if (this.lights.fill) {
+            this.lights.fill.intensity = intensity;
+        }
+    }
+    
+    setRimIntensity(intensity) {
+        if (this.lights.rim) {
+            this.lights.rim.intensity = intensity;
+        }
+    }
+    
+    setLightColor(color) {
+        if (this.lights.directional) {
+            this.lights.directional.color.set(color);
+        }
+        if (this.lights.fill) {
+            this.lights.fill.color.set(color);
         }
     }
     

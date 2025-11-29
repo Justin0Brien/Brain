@@ -205,8 +205,8 @@ export class GridHelper {
     createXYGrid() {
         this.grids.xy = this.createPlaneGrid(this.colors.xy, 'xy');
         this.grids.xy.name = 'gridXY';
-        // Position at the back of the model (behind it, outside the bounding sphere)
-        this.grids.xy.position.z = -this.modelRadius * 1.1;
+        // Position at origin - passes through center of brain
+        this.grids.xy.position.z = 0;
         this.scene.add(this.grids.xy);
     }
     
@@ -217,8 +217,8 @@ export class GridHelper {
         this.grids.xz = this.createPlaneGrid(this.colors.xz, 'xz');
         this.grids.xz.name = 'gridXZ';
         this.grids.xz.rotation.x = Math.PI / 2;
-        // Position below the model (outside the bounding sphere)
-        this.grids.xz.position.y = -this.modelRadius * 1.1;
+        // Position at origin - passes through center of brain
+        this.grids.xz.position.y = 0;
         this.scene.add(this.grids.xz);
     }
     
@@ -229,8 +229,8 @@ export class GridHelper {
         this.grids.yz = this.createPlaneGrid(this.colors.yz, 'yz');
         this.grids.yz.name = 'gridYZ';
         this.grids.yz.rotation.y = Math.PI / 2;
-        // Position to the left of the model (outside the bounding sphere)
-        this.grids.yz.position.x = -this.modelRadius * 1.1;
+        // Position at origin - passes through center of brain
+        this.grids.yz.position.x = 0;
         this.scene.add(this.grids.yz);
     }
     
