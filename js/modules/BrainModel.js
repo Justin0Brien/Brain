@@ -15,6 +15,12 @@ export class BrainModel {
         this.mixer = null; // For animations if the model has them
         this.clock = new THREE.Clock();
         
+        // Model metrics (calculated after loading)
+        this.boundingBox = null;
+        this.boundingSphere = null;
+        this.center = new THREE.Vector3();
+        this.size = new THREE.Vector3();
+        
         // Initialize loader
         this.loader = new GLTFLoader();
     }
@@ -26,11 +32,9 @@ export class BrainModel {
                 (gltf) => {
                     this.model = gltf.scene;
                     
-                    // Center the model
-                    this.centerModel();
-                    
-                    // Scale to appropriate size
-                    this.model.scale.set(2, 2, 2);
+                    // Analyze and normalize the model
+                    this.analyzeModel();
+                    this.normalizeModel();
                     
                     // Enable shadows
                     this.model.traverse((child) => {
@@ -55,11 +59,16 @@ export class BrainModel {
                     this.scene.add(this.model);
                     
                     console.log('Brain model loaded successfully');
+                    console.log(`Model size: ${this.size.x.toFixed(2)} x ${this.size.y.toFixed(2)} x ${this.size.z.toFixed(2)}`);
+                    console.log(`Bounding sphere radius: ${this.boundingSphere.radius.toFixed(2)}`);
+                    
                     resolve(this.model);
                 },
                 (progress) => {
-                    const percentComplete = (progress.loaded / progress.total) * 100;
-                    console.log(`Loading: ${percentComplete.toFixed(2)}%`);
+                    if (progress.total > 0) {
+                        const percentComplete = (progress.loaded / progress.total) * 100;
+                        console.log(`Loading: ${percentComplete.toFixed(2)}%`);
+                    }
                 },
                 (error) => {
                     console.error('Error loading brain model:', error);
@@ -69,11 +78,85 @@ export class BrainModel {
         });
     }
     
-    centerModel() {
-        // Calculate bounding box and center the model
-        const box = new THREE.Box3().setFromObject(this.model);
-        const center = box.getCenter(new THREE.Vector3());
-        this.model.position.sub(center);
+    /**
+     * Analyze the model to determine its size and bounding volumes
+     */
+    analyzeModel() {
+        // Calculate bounding box
+        this.boundingBox = new THREE.Box3().setFromObject(this.model);
+        
+        // Get center and size
+        this.boundingBox.getCenter(this.center);
+        this.boundingBox.getSize(this.size);
+        
+        // Calculate bounding sphere for camera positioning
+        this.boundingSphere = new THREE.Sphere();
+        this.boundingBox.getBoundingSphere(this.boundingSphere);
+    }
+    
+    /**
+     * Normalize the model: center it at origin and scale to a reasonable size
+     */
+    normalizeModel() {
+        // Center the model at origin
+        this.model.position.sub(this.center);
+        
+        // Determine the largest dimension
+        const maxDimension = Math.max(this.size.x, this.size.y, this.size.z);
+        
+        // Scale model so the largest dimension is approximately 4 units
+        // This provides a good default viewing size
+        const targetSize = 4;
+        const scale = targetSize / maxDimension;
+        this.model.scale.set(scale, scale, scale);
+        
+        // Update bounding box and sphere after scaling
+        this.boundingBox.setFromObject(this.model);
+        this.boundingBox.getCenter(this.center);
+        this.boundingBox.getSize(this.size);
+        this.boundingBox.getBoundingSphere(this.boundingSphere);
+        
+        // Orient brain in standard anatomical position
+        // Assuming most brain models have Y-up, we want to show it from a slight angle
+        // This rotation can be adjusted based on the specific model
+        // For now, we'll keep the default orientation and let the camera handle the view
+    }
+    
+    /**
+     * Get optimal camera distance to view the entire model
+     * @param {number} fov - Camera field of view in degrees
+     * @returns {number} - Optimal distance from model center
+     */
+    getOptimalCameraDistance(fov = 75) {
+        const radius = this.boundingSphere.radius;
+        const fovRad = (fov * Math.PI) / 180;
+        
+        // Calculate distance needed to fit the bounding sphere in view
+        // Add some padding (1.5x) for comfortable viewing
+        const distance = (radius / Math.sin(fovRad / 2)) * 1.2;
+        
+        return distance;
+    }
+    
+    /**
+     * Get the model's bounding sphere for camera calculations
+     */
+    getBoundingSphere() {
+        return this.boundingSphere;
+    }
+    
+    /**
+     * Get the model's center point
+     */
+    getCenter() {
+        return this.center.clone();
+    }
+    
+    /**
+     * Get the model's dimensions
+     */
+    getSize() {
+        return this.size.clone();
     }
     
     update() {

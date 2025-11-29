@@ -54,6 +54,25 @@ export class CameraController {
     
     // Convenience methods for camera manipulation
     
+    /**
+     * Set the target point the camera looks at
+     * @param {THREE.Vector3} target - The point to look at
+     */
+    setTarget(target) {
+        this.controls.target.copy(target);
+        this.controls.update();
+    }
+    
+    /**
+     * Set zoom (distance) limits based on model size
+     * @param {number} minDistance - Minimum distance from target
+     * @param {number} maxDistance - Maximum distance from target
+     */
+    setZoomLimits(minDistance, maxDistance) {
+        this.controls.minDistance = minDistance;
+        this.controls.maxDistance = maxDistance;
+    }
+    
     enableAutoRotate(enable = true) {
         this.controls.autoRotate = enable;
     }
