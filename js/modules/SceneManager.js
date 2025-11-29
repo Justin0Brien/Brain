@@ -37,8 +37,8 @@ export class SceneManager {
         // Add renderer to DOM
         this.container.appendChild(this.renderer.domElement);
         
-        // Add fog for depth perception
-        this.scene.fog = new THREE.Fog(0x0a0a0a, 10, 50);
+        // Add subtle fog for depth perception (far enough to not obscure model)
+        this.scene.fog = new THREE.Fog(0x0a0a0a, 50, 200);
     }
     
     render() {

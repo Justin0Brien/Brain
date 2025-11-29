@@ -98,28 +98,51 @@ export class BrainModel {
      * Normalize the model: center it at origin and scale to a reasonable size
      */
     normalizeModel() {
-        // Center the model at origin
-        this.model.position.sub(this.center);
+        // First, get the original bounding box
+        const originalBox = new THREE.Box3().setFromObject(this.model);
+        const originalCenter = new THREE.Vector3();
+        const originalSize = new THREE.Vector3();
+        originalBox.getCenter(originalCenter);
+        originalBox.getSize(originalSize);
         
         // Determine the largest dimension
-        const maxDimension = Math.max(this.size.x, this.size.y, this.size.z);
+        const maxDimension = Math.max(originalSize.x, originalSize.y, originalSize.z);
         
         // Scale model so the largest dimension is approximately 4 units
-        // This provides a good default viewing size
         const targetSize = 4;
         const scale = targetSize / maxDimension;
+        
+        // Apply scale to model
         this.model.scale.set(scale, scale, scale);
         
-        // Update bounding box and sphere after scaling
-        this.boundingBox.setFromObject(this.model);
+        // Center the model at origin (account for scale)
+        this.model.position.set(
+            -originalCenter.x * scale,
+            -originalCenter.y * scale,
+            -originalCenter.z * scale
+        );
+        
+        // Update model matrix
+        this.model.updateMatrixWorld(true);
+        
+        // Recalculate bounding volumes from the transformed model
+        this.boundingBox = new THREE.Box3().setFromObject(this.model);
         this.boundingBox.getCenter(this.center);
         this.boundingBox.getSize(this.size);
         this.boundingBox.getBoundingSphere(this.boundingSphere);
         
-        // Orient brain in standard anatomical position
-        // Assuming most brain models have Y-up, we want to show it from a slight angle
-        // This rotation can be adjusted based on the specific model
-        // For now, we'll keep the default orientation and let the camera handle the view
+        // Debug: Log normalized values
+        console.log('=== Model Normalization Debug ===');
+        console.log(`Original size: ${originalSize.x.toFixed(2)} x ${originalSize.y.toFixed(2)} x ${originalSize.z.toFixed(2)}`);
+        console.log(`Scale factor: ${scale.toFixed(4)}`);
+        console.log(`Model position: (${this.model.position.x.toFixed(2)}, ${this.model.position.y.toFixed(2)}, ${this.model.position.z.toFixed(2)})`);
+        console.log(`Bounding box center: (${this.center.x.toFixed(2)}, ${this.center.y.toFixed(2)}, ${this.center.z.toFixed(2)})`);
+        console.log(`Bounding sphere center: (${this.boundingSphere.center.x.toFixed(2)}, ${this.boundingSphere.center.y.toFixed(2)}, ${this.boundingSphere.center.z.toFixed(2)})`);
+        console.log(`Bounding sphere radius: ${this.boundingSphere.radius.toFixed(2)}`);
+        console.log(`Final model size: ${this.size.x.toFixed(2)} x ${this.size.y.toFixed(2)} x ${this.size.z.toFixed(2)}`);
+        
+        // Ensure center is at origin for consistent view positioning
+        this.center.set(0, 0, 0);
     }
     
     /**

@@ -178,18 +178,27 @@ export class UIController {
         // 100% = base distance, 10% = far, 200% = close
         const distance = this.baseDistance * (100 / zoomPercent);
         
+        console.log(`=== Zoom Debug ===`);
+        console.log(`Zoom percent: ${zoomPercent}, baseDistance: ${this.baseDistance}, target distance: ${distance.toFixed(2)}`);
+        
         if (this.viewer.cameraController && this.viewer.sceneManager) {
             const camera = this.viewer.sceneManager.camera;
             const target = this.viewer.cameraController.getTarget();
+            
+            console.log(`Camera position before: (${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)})`);
+            console.log(`Target: (${target.x.toFixed(2)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)})`);
             
             // Get direction from target to camera
             const direction = camera.position.clone().sub(target);
             const currentDistance = direction.length();
             
+            console.log(`Current distance: ${currentDistance.toFixed(2)}`);
+            
             if (currentDistance > 0.001) {
                 direction.normalize();
                 camera.position.copy(target).add(direction.multiplyScalar(distance));
                 this.viewer.cameraController.controls.update();
+                console.log(`Camera position after: (${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)})`);
             }
         }
     }
@@ -248,6 +257,11 @@ export class UIController {
         // Use the viewer's optimal distance which is calculated from the model size
         const distance = this.viewer.optimalDistance || this.baseDistance;
         
+        console.log(`=== setView Debug (${viewName}) ===`);
+        console.log(`Using distance: ${distance.toFixed(2)}`);
+        console.log(`viewer.optimalDistance: ${this.viewer.optimalDistance}`);
+        console.log(`baseDistance: ${this.baseDistance}`);
+        
         // Reset model rotation first
         if (this.viewer.brainModel && this.viewer.brainModel.model) {
             this.viewer.brainModel.model.rotation.set(0, 0, 0);
@@ -272,6 +286,7 @@ export class UIController {
         
         const view = views[viewName];
         if (view) {
+            console.log(`Setting camera position to: (${view.position.join(', ')})`);
             camera.position.set(...view.position);
             camera.up.set(...view.up);
             this.viewer.cameraController.setTarget({ x: 0, y: 0, z: 0 });
