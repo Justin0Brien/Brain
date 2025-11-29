@@ -180,9 +180,17 @@ export class UIController {
         
         if (this.viewer.cameraController && this.viewer.sceneManager) {
             const camera = this.viewer.sceneManager.camera;
-            const direction = camera.position.clone().normalize();
-            camera.position.copy(direction.multiplyScalar(distance));
-            this.viewer.cameraController.controls.update();
+            const target = this.viewer.cameraController.getTarget();
+            
+            // Get direction from target to camera
+            const direction = camera.position.clone().sub(target);
+            const currentDistance = direction.length();
+            
+            if (currentDistance > 0.001) {
+                direction.normalize();
+                camera.position.copy(target).add(direction.multiplyScalar(distance));
+                this.viewer.cameraController.controls.update();
+            }
         }
     }
     
@@ -237,7 +245,8 @@ export class UIController {
         if (!this.viewer.cameraController || !this.viewer.sceneManager) return;
         
         const camera = this.viewer.sceneManager.camera;
-        const distance = this.baseDistance;
+        // Use the viewer's optimal distance which is calculated from the model size
+        const distance = this.viewer.optimalDistance || this.baseDistance;
         
         // Reset model rotation first
         if (this.viewer.brainModel && this.viewer.brainModel.model) {

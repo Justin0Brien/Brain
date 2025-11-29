@@ -42,15 +42,15 @@ export class GridHelper {
     
     /**
      * Initialize grids based on model size
-     * @param {number} modelSize - The size of the model (bounding sphere radius)
+     * @param {number} modelRadius - The radius of the model's bounding sphere
      */
-    init(modelSize) {
-        // Store model size for positioning
-        this.modelRadius = modelSize;
+    init(modelRadius) {
+        // Store model radius for positioning
+        this.modelRadius = modelRadius;
         
         // Grid should be slightly larger than the model for context
-        // modelSize is the bounding sphere radius, so diameter is modelSize * 2
-        this.gridSize = modelSize * 1.5;  // Grid extends 1.5x the radius in each direction
+        // modelRadius is the bounding sphere radius
+        this.gridSize = modelRadius * 3;  // Grid extends 1.5x the radius in each direction
         this.gridDivisions = 10;  // 10 divisions for cleaner look
         
         // Create all grids
@@ -205,8 +205,8 @@ export class GridHelper {
     createXYGrid() {
         this.grids.xy = this.createPlaneGrid(this.colors.xy, 'xy');
         this.grids.xy.name = 'gridXY';
-        // Position at the back of the model (behind it)
-        this.grids.xy.position.z = -this.modelRadius * 0.6;
+        // Position at the back of the model (behind it, outside the bounding sphere)
+        this.grids.xy.position.z = -this.modelRadius * 1.1;
         this.scene.add(this.grids.xy);
     }
     
@@ -217,8 +217,8 @@ export class GridHelper {
         this.grids.xz = this.createPlaneGrid(this.colors.xz, 'xz');
         this.grids.xz.name = 'gridXZ';
         this.grids.xz.rotation.x = Math.PI / 2;
-        // Position below the model
-        this.grids.xz.position.y = -this.modelRadius * 0.6;
+        // Position below the model (outside the bounding sphere)
+        this.grids.xz.position.y = -this.modelRadius * 1.1;
         this.scene.add(this.grids.xz);
     }
     
@@ -229,8 +229,8 @@ export class GridHelper {
         this.grids.yz = this.createPlaneGrid(this.colors.yz, 'yz');
         this.grids.yz.name = 'gridYZ';
         this.grids.yz.rotation.y = Math.PI / 2;
-        // Position to the left of the model
-        this.grids.yz.position.x = -this.modelRadius * 0.6;
+        // Position to the left of the model (outside the bounding sphere)
+        this.grids.yz.position.x = -this.modelRadius * 1.1;
         this.scene.add(this.grids.yz);
     }
     

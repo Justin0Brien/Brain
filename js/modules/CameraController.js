@@ -117,20 +117,22 @@ export class CameraController {
     }
     
     // Extension point for predefined views
-    setView(viewName) {
+    setView(viewName, distance = 5) {
         const views = {
-            front: { position: [0, 0, 5], target: [0, 0, 0] },
-            back: { position: [0, 0, -5], target: [0, 0, 0] },
-            left: { position: [-5, 0, 0], target: [0, 0, 0] },
-            right: { position: [5, 0, 0], target: [0, 0, 0] },
-            top: { position: [0, 5, 0], target: [0, 0, 0] },
-            bottom: { position: [0, -5, 0], target: [0, 0, 0] }
+            front: { position: [0, 0, distance], target: [0, 0, 0], up: [0, 1, 0] },
+            back: { position: [0, 0, -distance], target: [0, 0, 0], up: [0, 1, 0] },
+            left: { position: [-distance, 0, 0], target: [0, 0, 0], up: [0, 1, 0] },
+            right: { position: [distance, 0, 0], target: [0, 0, 0], up: [0, 1, 0] },
+            top: { position: [0, distance, 0], target: [0, 0, 0], up: [0, 0, -1] },
+            bottom: { position: [0, -distance, 0], target: [0, 0, 0], up: [0, 0, 1] }
         };
         
         if (views[viewName]) {
             const view = views[viewName];
             this.camera.position.set(...view.position);
+            this.camera.up.set(...view.up);
             this.controls.target.set(...view.target);
+            this.camera.lookAt(...view.target);
             this.controls.update();
         }
     }
