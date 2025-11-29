@@ -42,13 +42,16 @@ export class GridHelper {
     
     /**
      * Initialize grids based on model size
-     * @param {number} modelSize - The size of the model to scale grids to
+     * @param {number} modelSize - The size of the model (bounding sphere radius)
      */
     init(modelSize) {
-        // Calculate grid parameters based on model size
-        // Assume model is in arbitrary units, scale to show as millimeters
-        this.gridSize = modelSize * 2;
-        this.gridDivisions = 20;
+        // Store model size for positioning
+        this.modelRadius = modelSize;
+        
+        // Grid should be slightly larger than the model for context
+        // modelSize is the bounding sphere radius, so diameter is modelSize * 2
+        this.gridSize = modelSize * 1.5;  // Grid extends 1.5x the radius in each direction
+        this.gridDivisions = 10;  // 10 divisions for cleaner look
         
         // Create all grids
         this.createAxes();
@@ -67,7 +70,8 @@ export class GridHelper {
      * Create the main axes with labels
      */
     createAxes() {
-        const axisLength = this.gridSize / 2;
+        // Axis length should extend slightly beyond the model
+        const axisLength = this.modelRadius * 1.2;
         
         // Create axes group
         this.axesHelper = new THREE.Group();
@@ -129,8 +133,9 @@ export class GridHelper {
      * Add tick marks along axes
      */
     addAxisTicks(group, length) {
-        const tickSize = this.gridSize / 40;
-        const tickInterval = this.gridSize / this.gridDivisions;
+        const tickSize = this.modelRadius / 20;
+        const numTicks = 10;
+        const tickInterval = length / (numTicks / 2);
         
         // Create tick marks
         const tickMaterial = new THREE.LineBasicMaterial({ 
@@ -139,9 +144,10 @@ export class GridHelper {
             opacity: 0.5
         });
         
-        for (let i = -this.gridDivisions / 2; i <= this.gridDivisions / 2; i++) {
+        for (let i = -numTicks / 2; i <= numTicks / 2; i++) {
             const pos = i * tickInterval;
             if (Math.abs(pos) < 0.001) continue; // Skip origin
+            if (Math.abs(pos) > length) continue; // Skip beyond axis length
             
             // X axis ticks
             const xTickGeom = new THREE.BufferGeometry().setFromPoints([
@@ -170,7 +176,9 @@ export class GridHelper {
      * Add arrow head to axis
      */
     addArrowHead(group, axis, length, color) {
-        const coneGeometry = new THREE.ConeGeometry(this.gridSize / 50, this.gridSize / 20, 8);
+        const coneRadius = this.modelRadius / 25;
+        const coneHeight = this.modelRadius / 10;
+        const coneGeometry = new THREE.ConeGeometry(coneRadius, coneHeight, 8);
         const coneMaterial = new THREE.MeshBasicMaterial({ color: color });
         const cone = new THREE.Mesh(coneGeometry, coneMaterial);
         
@@ -197,8 +205,8 @@ export class GridHelper {
     createXYGrid() {
         this.grids.xy = this.createPlaneGrid(this.colors.xy, 'xy');
         this.grids.xy.name = 'gridXY';
-        // Position behind the model
-        this.grids.xy.position.z = -this.gridSize / 4;
+        // Position at the back of the model (behind it)
+        this.grids.xy.position.z = -this.modelRadius * 0.6;
         this.scene.add(this.grids.xy);
     }
     
@@ -210,7 +218,7 @@ export class GridHelper {
         this.grids.xz.name = 'gridXZ';
         this.grids.xz.rotation.x = Math.PI / 2;
         // Position below the model
-        this.grids.xz.position.y = -this.gridSize / 4;
+        this.grids.xz.position.y = -this.modelRadius * 0.6;
         this.scene.add(this.grids.xz);
     }
     
@@ -222,7 +230,7 @@ export class GridHelper {
         this.grids.yz.name = 'gridYZ';
         this.grids.yz.rotation.y = Math.PI / 2;
         // Position to the left of the model
-        this.grids.yz.position.x = -this.gridSize / 4;
+        this.grids.yz.position.x = -this.modelRadius * 0.6;
         this.scene.add(this.grids.yz);
     }
     
@@ -232,9 +240,12 @@ export class GridHelper {
     createPlaneGrid(color, plane) {
         const group = new THREE.Group();
         
+        // Grid size should be 3x the model radius (1.5x on each side)
+        const gridTotalSize = this.modelRadius * 3;
+        
         // Create main grid
         const gridHelper = new THREE.GridHelper(
-            this.gridSize, 
+            gridTotalSize, 
             this.gridDivisions,
             color,
             color
@@ -251,8 +262,8 @@ export class GridHelper {
         
         // Add subdivisions (finer grid)
         const subGridHelper = new THREE.GridHelper(
-            this.gridSize,
-            this.gridDivisions * 5,
+            gridTotalSize,
+            this.gridDivisions * 2,
             color,
             color
         );
