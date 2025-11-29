@@ -14,6 +14,8 @@ import { BrainModel } from './modules/BrainModel.js';
 import { CameraController } from './modules/CameraController.js';
 import { LightingManager } from './modules/LightingManager.js';
 import { MaterialManager } from './modules/MaterialManager.js';
+import { GridHelper } from './modules/GridHelper.js';
+import { UIController } from './modules/UIController.js';
 
 class BrainViewer {
     constructor() {
@@ -29,8 +31,17 @@ class BrainViewer {
             this.sceneManager.renderer.domElement
         );
         
+        // Grid helper (initialized after model loads)
+        this.gridHelper = null;
+        
+        // UI controller (initialized after model loads)
+        this.uiController = null;
+        
         // Brain model instance
         this.brainModel = null;
+        
+        // Optimal viewing distance (set after model loads)
+        this.optimalDistance = 5;
         
         // Bind methods
         this.animate = this.animate.bind(this);
@@ -43,8 +54,21 @@ class BrainViewer {
             this.brainModel = new BrainModel(this.sceneManager.scene);
             await this.brainModel.load('models/brain.glb');
             
+            // Initialize grid helper based on model size
+            const modelSize = this.brainModel.getBoundingSphere().radius * 2;
+            this.gridHelper = new GridHelper(this.sceneManager.scene);
+            this.gridHelper.init(modelSize);
+            
             // Position camera to show entire model
             this.setupOptimalView();
+            
+            // Initialize UI controller
+            this.uiController = new UIController(this);
+            this.uiController.setBaseDistance(this.optimalDistance);
+            
+            // Update model info display
+            const scaleInfo = this.gridHelper.getScaleInfo(modelSize);
+            this.uiController.updateModelInfo(this.brainModel, scaleInfo);
             
             // Hide loading screen
             this.loadingElement.classList.add('hidden');
@@ -71,6 +95,9 @@ class BrainViewer {
         const distance = this.brainModel.getOptimalCameraDistance(camera.fov);
         const center = this.brainModel.getCenter();
         
+        // Store optimal distance for UI
+        this.optimalDistance = distance;
+        
         // Position camera at a slight angle for a more interesting default view
         // This shows the brain from a front-right-top perspective (standard anatomical viewing angle)
         const angleH = Math.PI * 0.15;  // Slight horizontal rotation (about 27 degrees)
@@ -81,6 +108,7 @@ class BrainViewer {
         const z = distance * Math.cos(angleH) * Math.cos(angleV);
         
         camera.position.set(x, y, z);
+        camera.up.set(0, 1, 0);
         
         // Update camera controller to look at model center
         this.cameraController.setTarget(center);

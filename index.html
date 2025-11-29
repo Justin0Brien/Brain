@@ -8,9 +8,100 @@
     <link rel="icon" href="data:,">
 </head>
 <body>
-    <div id="info">
-        <h1>3D Brain Viewer</h1>
-        <p>Controls: Left click + drag to rotate | Right click + drag to pan | Scroll to zoom</p>
+    <!-- Left Control Panel -->
+    <div id="control-panel">
+        <div class="panel-section">
+            <h2>3D Brain Viewer</h2>
+            <p class="hint">Left click + drag to rotate<br>Right click + drag to pan<br>Scroll to zoom</p>
+        </div>
+        
+        <div class="panel-section">
+            <h3>Camera Controls</h3>
+            <div class="control-group">
+                <label>Rotation X</label>
+                <input type="range" id="rotation-x" min="-180" max="180" value="0">
+                <span class="value-display" id="rotation-x-value">0°</span>
+            </div>
+            <div class="control-group">
+                <label>Rotation Y</label>
+                <input type="range" id="rotation-y" min="-180" max="180" value="0">
+                <span class="value-display" id="rotation-y-value">0°</span>
+            </div>
+            <div class="control-group">
+                <label>Rotation Z</label>
+                <input type="range" id="rotation-z" min="-180" max="180" value="0">
+                <span class="value-display" id="rotation-z-value">0°</span>
+            </div>
+            <div class="control-group">
+                <label>Zoom</label>
+                <input type="range" id="zoom" min="10" max="200" value="100">
+                <span class="value-display" id="zoom-value">100%</span>
+            </div>
+            <div class="control-group">
+                <label>Pan X</label>
+                <input type="range" id="pan-x" min="-100" max="100" value="0">
+                <span class="value-display" id="pan-x-value">0</span>
+            </div>
+            <div class="control-group">
+                <label>Pan Y</label>
+                <input type="range" id="pan-y" min="-100" max="100" value="0">
+                <span class="value-display" id="pan-y-value">0</span>
+            </div>
+            <button id="reset-camera" class="btn-secondary">Reset Camera</button>
+        </div>
+        
+        <div class="panel-section">
+            <h3>Standard Views</h3>
+            <div class="view-buttons">
+                <button id="view-front" class="view-btn">Front</button>
+                <button id="view-back" class="view-btn">Back</button>
+                <button id="view-left" class="view-btn">Left</button>
+                <button id="view-right" class="view-btn">Right</button>
+                <button id="view-top" class="view-btn">Top</button>
+                <button id="view-bottom" class="view-btn">Bottom</button>
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <h3>Display Options</h3>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="show-axes" checked>
+                    Show Axes
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="show-grid-xy">
+                    XY Grid (Coronal)
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="show-grid-xz" checked>
+                    XZ Grid (Axial)
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="show-grid-yz">
+                    YZ Grid (Sagittal)
+                </label>
+            </div>
+            <div class="checkbox-group">
+                <label>
+                    <input type="checkbox" id="auto-rotate">
+                    Auto Rotate
+                </label>
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <h3>Model Info</h3>
+            <div id="model-info">
+                <p>Loading...</p>
+            </div>
+        </div>
     </div>
     
     <div id="loading">

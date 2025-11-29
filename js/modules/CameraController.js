@@ -56,11 +56,22 @@ export class CameraController {
     
     /**
      * Set the target point the camera looks at
-     * @param {THREE.Vector3} target - The point to look at
+     * @param {THREE.Vector3|Object} target - The point to look at (Vector3 or {x, y, z})
      */
     setTarget(target) {
-        this.controls.target.copy(target);
+        if (target.isVector3) {
+            this.controls.target.copy(target);
+        } else {
+            this.controls.target.set(target.x || 0, target.y || 0, target.z || 0);
+        }
         this.controls.update();
+    }
+    
+    /**
+     * Get the current target
+     */
+    getTarget() {
+        return this.controls.target.clone();
     }
     
     /**
