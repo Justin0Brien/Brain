@@ -6,6 +6,8 @@
  * - NIfTI volumetric brain data (MNI templates)
  */
 
+import * as THREE from 'three';
+
 export class ModelDownloader {
     constructor() {
         // Known sources for brain models
@@ -169,7 +171,7 @@ export class ModelDownloader {
 /**
  * Generate a procedural brain-like mesh when no model is available
  */
-export function generateProceduralBrain(THREE) {
+export function generateProceduralBrain() {
     const group = new THREE.Group();
     
     // Create brain hemispheres using deformed spheres

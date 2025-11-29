@@ -102,7 +102,7 @@ export class BrainModel {
      */
     loadProceduralBrain() {
         return new Promise((resolve) => {
-            this.model = generateProceduralBrain(THREE);
+            this.model = generateProceduralBrain();
             this.isProcedural = true;
             
             // Analyze and normalize
