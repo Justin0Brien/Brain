@@ -1,0 +1,33 @@
+{
+  "name": "brain-3d-viewer",
+  "version": "1.0.0",
+  "description": "Interactive 3D brain visualization web application built with Three.js",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Justin0Brien/Brain.git"
+  },
+  "keywords": [
+    "3d",
+    "brain",
+    "visualization",
+    "threejs",
+    "webgl",
+    "neuroanatomy",
+    "medical",
+    "interactive"
+  ],
+  "author": "Justin O'Brien",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ]
+}
