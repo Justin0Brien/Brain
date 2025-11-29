@@ -5,6 +5,9 @@
  * Designed to be extensible for future features like slicing and highlighting regions.
  */
 
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 export class BrainModel {
     constructor(scene) {
         this.scene = scene;
@@ -13,7 +16,7 @@ export class BrainModel {
         this.clock = new THREE.Clock();
         
         // Initialize loader
-        this.loader = new THREE.GLTFLoader();
+        this.loader = new GLTFLoader();
     }
     
     async load(modelPath) {

@@ -5,6 +5,8 @@
  * Provides a clean interface for other modules to interact with the 3D scene.
  */
 
+import * as THREE from 'three';
+
 export class SceneManager {
     constructor(container) {
         this.container = container;

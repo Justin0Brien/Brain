@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Brain Viewer</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:,">
 </head>
 <body>
     <div id="info">
@@ -19,12 +20,15 @@
     
     <div id="viewer-container"></div>
     
-    <!-- Three.js core -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-    <!-- OrbitControls for camera manipulation -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-    <!-- GLTFLoader for loading 3D models -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Import map for Three.js ES modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
     
     <!-- Application modules -->
     <script type="module" src="js/main.js"></script>

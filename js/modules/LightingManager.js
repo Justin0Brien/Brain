@@ -5,6 +5,8 @@
  * Extensible for advanced lighting effects and configurations.
  */
 
+import * as THREE from 'three';
+
 export class LightingManager {
     constructor(scene) {
         this.scene = scene;

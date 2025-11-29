@@ -5,13 +5,16 @@
  * Extensible for custom camera behaviors and animation paths.
  */
 
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 export class CameraController {
     constructor(camera, domElement) {
         this.camera = camera;
         this.domElement = domElement;
         
         // Initialize OrbitControls
-        this.controls = new THREE.OrbitControls(this.camera, this.domElement);
+        this.controls = new OrbitControls(this.camera, this.domElement);
         
         // Configure controls
         this.setupControls();

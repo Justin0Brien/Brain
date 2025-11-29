@@ -5,6 +5,8 @@
  * Extensible for custom shaders and advanced material effects.
  */
 
+import * as THREE from 'three';
+
 export class MaterialManager {
     constructor() {
         this.materials = {};
