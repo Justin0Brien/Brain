@@ -48,6 +48,25 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.nav-links {
+    margin-top: 10px;
+}
+
+.nav-link {
+    display: inline-block;
+    color: #6af;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 5px 10px;
+    background: rgba(100, 150, 255, 0.1);
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.nav-link:hover {
+    background: rgba(100, 150, 255, 0.25);
+}
+
 .panel-section:last-child {
     border-bottom: none;
 }

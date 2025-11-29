@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Brain Viewer - Volumetric MRI</title>
+    <link rel="stylesheet" href="css/volume-style.css">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+    <!-- Left Control Panel -->
+    <div id="control-panel">
+        <div class="panel-section">
+            <h2>Volumetric Brain Viewer</h2>
+            <p class="hint">MNI ICBM 152 T1 Template<br>1×1×1mm resolution</p>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">← Surface Model Viewer</a>
+            </div>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="slice-controls">▼ Slice Navigation</h3>
+            <div id="slice-controls" class="section-content">
+                <div class="control-group">
+                    <label>Axial (Z) Slice</label>
+                    <input type="range" id="slice-axial" min="0" max="100" value="50">
+                    <span class="value-display" id="slice-axial-value">50</span>
+                </div>
+                <div class="control-group">
+                    <label>Coronal (Y) Slice</label>
+                    <input type="range" id="slice-coronal" min="0" max="100" value="50">
+                    <span class="value-display" id="slice-coronal-value">50</span>
+                </div>
+                <div class="control-group">
+                    <label>Sagittal (X) Slice</label>
+                    <input type="range" id="slice-sagittal" min="0" max="100" value="50">
+                    <span class="value-display" id="slice-sagittal-value">50</span>
+                </div>
+                <button id="reset-slices" class="btn-secondary">Reset to Center</button>
+            </div>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="visibility-controls">▼ Visibility</h3>
+            <div id="visibility-controls" class="section-content">
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-axial" checked>
+                        Axial Slice
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-coronal" checked>
+                        Coronal Slice
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-sagittal" checked>
+                        Sagittal Slice
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-surface" checked>
+                        3D Surface
+                    </label>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-axes" checked>
+                        Show Axes
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="windowing-controls">▼ Contrast (Windowing)</h3>
+            <div id="windowing-controls" class="section-content">
+                <div class="control-group">
+                    <label>Window Level</label>
+                    <input type="range" id="window-level" min="0" max="100" value="50">
+                    <span class="value-display" id="window-level-value">50%</span>
+                </div>
+                <div class="control-group">
+                    <label>Window Width</label>
+                    <input type="range" id="window-width" min="10" max="200" value="100">
+                    <span class="value-display" id="window-width-value">100%</span>
+                </div>
+                <div class="control-group">
+                    <label>Preset</label>
+                    <select id="window-preset" class="control-select">
+                        <option value="default">Default</option>
+                        <option value="brain">Brain</option>
+                        <option value="bone">Bone</option>
+                        <option value="soft">Soft Tissue</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="surface-controls">▼ Surface Rendering</h3>
+            <div id="surface-controls" class="section-content">
+                <div class="control-group">
+                    <label>Threshold (Isosurface)</label>
+                    <input type="range" id="surface-threshold" min="10" max="90" value="30">
+                    <span class="value-display" id="surface-threshold-value">30%</span>
+                </div>
+                <div class="control-group">
+                    <label>Surface Color</label>
+                    <input type="color" id="surface-color" value="#ffccaa" class="color-picker">
+                </div>
+                <div class="control-group">
+                    <label>Opacity</label>
+                    <input type="range" id="surface-opacity" min="10" max="100" value="85">
+                    <span class="value-display" id="surface-opacity-value">85%</span>
+                </div>
+                <button id="generate-surface" class="btn-primary">Generate Surface</button>
+                <div id="surface-progress" class="progress-bar hidden">
+                    <div class="progress-fill"></div>
+                    <span class="progress-text">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-section collapsible">
+            <h3 class="section-header" data-target="camera-controls">▼ Camera</h3>
+            <div id="camera-controls" class="section-content">
+                <div class="view-buttons">
+                    <button id="view-front" class="view-btn">Front</button>
+                    <button id="view-back" class="view-btn">Back</button>
+                    <button id="view-left" class="view-btn">Left</button>
+                    <button id="view-right" class="view-btn">Right</button>
+                    <button id="view-top" class="view-btn">Top</button>
+                    <button id="view-bottom" class="view-btn">Bottom</button>
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="auto-rotate">
+                        Auto Rotate
+                    </label>
+                </div>
+                <button id="reset-camera" class="btn-secondary">Reset Camera</button>
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <h3>Volume Info</h3>
+            <div id="volume-info">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Slice Views Panel (optional 2D views) -->
+    <div id="slice-panel" class="hidden">
+        <div class="slice-view" id="axial-view">
+            <div class="slice-label">Axial</div>
+            <canvas id="axial-canvas"></canvas>
+        </div>
+        <div class="slice-view" id="coronal-view">
+            <div class="slice-label">Coronal</div>
+            <canvas id="coronal-canvas"></canvas>
+        </div>
+        <div class="slice-view" id="sagittal-view">
+            <div class="slice-label">Sagittal</div>
+            <canvas id="sagittal-canvas"></canvas>
+        </div>
+    </div>
+    
+    <div id="loading">
+        <div class="spinner"></div>
+        <p id="loading-text">Loading brain volume...</p>
+    </div>
+    
+    <div id="viewer-container"></div>
+    
+    <!-- Import map for Three.js ES modules -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <!-- Application modules -->
+    <script type="module" src="js/volume-main.js"></script>
+</body>
+</html>
