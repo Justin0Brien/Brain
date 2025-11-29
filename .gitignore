@@ -54,9 +54,8 @@ tmp/
 temp/
 *.tmp
 
-# Large model files (optional - remove if you want to commit your model)
-# models/*.glb
-# models/*.gltf
+# Large model/data files - downloaded automatically by the app
+models/
 
 # Backup files
 *.bak

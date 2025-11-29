@@ -3,10 +3,12 @@
  * 
  * This class provides methods to load, manipulate, and query the brain model.
  * Designed to be extensible for future features like slicing and highlighting regions.
+ * Includes automatic downloading from third-party sources if local model is missing.
  */
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { ModelDownloader, generateProceduralBrain } from './ModelDownloader.js';
 
 export class BrainModel {
     constructor(scene) {
@@ -14,6 +16,7 @@ export class BrainModel {
         this.model = null;
         this.mixer = null; // For animations if the model has them
         this.clock = new THREE.Clock();
+        this.isProcedural = false; // Track if using generated model
         
         // Model metrics (calculated after loading)
         this.boundingBox = null;
@@ -21,14 +24,27 @@ export class BrainModel {
         this.center = new THREE.Vector3();
         this.size = new THREE.Vector3();
         
-        // Initialize loader
+        // Initialize loader and downloader
         this.loader = new GLTFLoader();
+        this.downloader = new ModelDownloader();
     }
     
-    async load(modelPath) {
+    async load(modelPath, onProgress = null) {
+        // First, try to find a valid model source
+        const modelSource = await this.downloader.getGLBModel(modelPath);
+        
+        if (modelSource.generateProcedural) {
+            // No model available, generate procedural brain
+            console.log('Generating procedural brain model...');
+            return this.loadProceduralBrain();
+        }
+        
+        const urlToLoad = modelSource.url;
+        console.log(`Loading brain model from: ${urlToLoad}`);
+        
         return new Promise((resolve, reject) => {
             this.loader.load(
-                modelPath,
+                urlToLoad,
                 (gltf) => {
                     this.model = gltf.scene;
                     
@@ -68,13 +84,46 @@ export class BrainModel {
                     if (progress.total > 0) {
                         const percentComplete = (progress.loaded / progress.total) * 100;
                         console.log(`Loading: ${percentComplete.toFixed(2)}%`);
+                        if (onProgress) onProgress(percentComplete);
                     }
                 },
                 (error) => {
                     console.error('Error loading brain model:', error);
-                    reject(new Error('Failed to load brain model. Please check that the model file exists at the specified path.'));
+                    // Fallback to procedural brain on error
+                    console.log('Falling back to procedural brain...');
+                    this.loadProceduralBrain().then(resolve).catch(reject);
                 }
             );
+        });
+    }
+    
+    /**
+     * Generate and load a procedural brain when no model is available
+     */
+    loadProceduralBrain() {
+        return new Promise((resolve) => {
+            this.model = generateProceduralBrain(THREE);
+            this.isProcedural = true;
+            
+            // Analyze and normalize
+            this.analyzeModel();
+            this.normalizeModel();
+            
+            // Enable shadows
+            this.model.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                    child.userData.originalMaterial = child.material.clone();
+                }
+            });
+            
+            this.scene.add(this.model);
+            
+            console.log('Procedural brain model generated');
+            console.log(`Model size: ${this.size.x.toFixed(2)} x ${this.size.y.toFixed(2)} x ${this.size.z.toFixed(2)}`);
+            
+            resolve(this.model);
         });
     }
     

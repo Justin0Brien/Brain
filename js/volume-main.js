@@ -6,18 +6,21 @@
  * - Interactive slice navigation (axial, coronal, sagittal)
  * - 3D surface extraction using marching cubes
  * - Intensity windowing controls
+ * - Automatic download from third-party sources if local data missing
  */
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { NiftiLoader } from './modules/NiftiLoader.js';
 import { VolumeRenderer } from './modules/VolumeRenderer.js';
+import { ModelDownloader } from './modules/ModelDownloader.js';
 
 class VolumetricBrainViewer {
     constructor() {
         this.container = document.getElementById('viewer-container');
         this.loadingDiv = document.getElementById('loading');
         this.loadingText = document.getElementById('loading-text');
+        this.downloader = new ModelDownloader();
         
         // Three.js components
         this.scene = null;
@@ -185,11 +188,25 @@ class VolumetricBrainViewer {
     }
     
     async loadVolume() {
+        const localPath = 'models/mni_icbm152_nlin_sym_09c/mni_icbm152_t1_tal_nlin_sym_09c.nii.gz';
+        
         try {
+            this.updateLoadingText('Checking for brain volume data...');
+            
+            // Try to find a valid volume source
+            const volumeSource = await this.downloader.getNiftiVolume(localPath);
+            
+            if (!volumeSource.url) {
+                // No volume available - show instructions
+                this.showDownloadInstructions();
+                return;
+            }
+            
             this.updateLoadingText('Loading NIfTI brain volume...');
+            console.log(`Loading volume from: ${volumeSource.url}`);
             
             this.niftiLoader = new NiftiLoader();
-            await this.niftiLoader.load('models/mni_icbm152_nlin_sym_09c/mni_icbm152_t1_tal_nlin_sym_09c.nii.gz');
+            await this.niftiLoader.load(volumeSource.url);
             
             this.updateLoadingText('Creating volume renderer...');
             this.volumeRenderer = new VolumeRenderer(this.scene, this.niftiLoader);
@@ -210,9 +227,87 @@ class VolumetricBrainViewer {
             
         } catch (error) {
             console.error('Failed to load volume:', error);
-            this.updateLoadingText(`Error: ${error.message}`);
-            throw error;
+            this.showDownloadInstructions(error.message);
         }
+    }
+    
+    /**
+     * Show download instructions when no volume data is available
+     */
+    showDownloadInstructions(errorMsg = null) {
+        this.loadingDiv.innerHTML = `
+            <div class="download-instructions">
+                <h2>🧠 MRI Volume Data Required</h2>
+                ${errorMsg ? `<p class="error-msg">Error: ${errorMsg}</p>` : ''}
+                <p>The volumetric brain viewer requires NIfTI format MRI data.</p>
+                <h3>Option 1: Download MNI Template (Recommended)</h3>
+                <ol>
+                    <li>Visit the <a href="https://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009" target="_blank">MNI ICBM 152 Atlas</a></li>
+                    <li>Download "ICBM 2009c Nonlinear Symmetric" → NIfTI format (~55MB)</li>
+                    <li>Extract the ZIP file to: <code>models/mni_icbm152_nlin_sym_09c/</code></li>
+                    <li><button onclick="location.reload()" class="btn-primary">Refresh Page</button></li>
+                </ol>
+                <h3>Option 2: Use Any NIfTI Brain Scan</h3>
+                <p>Place any .nii or .nii.gz file in the models folder and update the path in the code.</p>
+                <h3>Free Brain Data Sources:</h3>
+                <ul>
+                    <li><a href="https://openneuro.org/" target="_blank">OpenNeuro</a> - Open MRI datasets</li>
+                    <li><a href="https://brain-development.org/ixi-dataset/" target="_blank">IXI Dataset</a> - Normal brain MRI</li>
+                    <li><a href="https://www.oasis-brains.org/" target="_blank">OASIS</a> - Aging brain studies</li>
+                </ul>
+                <p><a href="index.html" class="nav-link">← Back to Surface Model Viewer</a></p>
+            </div>
+        `;
+        
+        // Add styles for the instructions
+        const style = document.createElement('style');
+        style.textContent = `
+            .download-instructions {
+                max-width: 600px;
+                padding: 30px;
+                background: rgba(30, 35, 50, 0.95);
+                border-radius: 12px;
+                text-align: left;
+            }
+            .download-instructions h2 {
+                color: #6af;
+                margin-bottom: 15px;
+            }
+            .download-instructions h3 {
+                color: #aaa;
+                margin: 20px 0 10px;
+                font-size: 14px;
+            }
+            .download-instructions p {
+                color: #888;
+                line-height: 1.6;
+            }
+            .download-instructions .error-msg {
+                color: #f66;
+                background: rgba(255,100,100,0.1);
+                padding: 10px;
+                border-radius: 4px;
+                margin-bottom: 15px;
+            }
+            .download-instructions ol, .download-instructions ul {
+                color: #ccc;
+                margin-left: 20px;
+                line-height: 1.8;
+            }
+            .download-instructions a {
+                color: #6af;
+            }
+            .download-instructions code {
+                background: #1a1a2a;
+                padding: 2px 6px;
+                border-radius: 3px;
+                font-family: monospace;
+            }
+            .download-instructions .btn-primary {
+                margin-top: 10px;
+            }
+        `;
+        document.head.appendChild(style);
     }
     
     updateLoadingText(text) {

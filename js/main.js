@@ -157,15 +157,110 @@ class BrainViewer {
     }
     
     showError(message) {
+        const isProcedural = this.brainModel && this.brainModel.isProcedural;
+        
+        if (isProcedural) {
+            // Using procedural brain - show info but allow continuing
+            console.log('Using procedurally generated brain model');
+            return;
+        }
+        
         this.loadingElement.innerHTML = `
-            <div style="color: #ff6b6b;">
-                <h2>Error Loading Brain Model</h2>
-                <p>${message}</p>
-                <p style="margin-top: 20px; font-size: 14px;">
-                    Please ensure a brain model file is placed at: <code>models/brain.glb</code>
+            <div class="download-instructions">
+                <h2>🧠 Brain Model Required</h2>
+                <p class="error-msg">${message}</p>
+                <p>No brain model was found. The viewer will use a procedurally generated brain.</p>
+                
+                <h3>For Better Quality: Download a Real Brain Model</h3>
+                <ol>
+                    <li>Visit <a href="https://sketchfab.com/search?q=brain+anatomy&type=models&licenses=cc0&licenses=by&licenses=by-nc" target="_blank">Sketchfab</a> (filter by free licenses)</li>
+                    <li>Download a brain model in <strong>GLB</strong> or <strong>GLTF</strong> format</li>
+                    <li>Save it as <code>models/brain.glb</code></li>
+                    <li><button onclick="location.reload()" class="btn-primary">Refresh Page</button></li>
+                </ol>
+                
+                <h3>Alternative Sources:</h3>
+                <ul>
+                    <li><a href="https://www.turbosquid.com/Search/3D-Models/free/brain" target="_blank">TurboSquid</a> - Free 3D models</li>
+                    <li><a href="https://free3d.com/3d-models/brain" target="_blank">Free3D</a> - Brain models</li>
+                    <li><a href="https://www.cgtrader.com/free-3d-models/brain" target="_blank">CGTrader</a> - Free assets</li>
+                </ul>
+                
+                <p style="margin-top: 20px;">
+                    <button onclick="document.getElementById('loading').classList.add('hidden')" class="btn-secondary">
+                        Continue with Procedural Brain
+                    </button>
                 </p>
+                <p><a href="volume.html" class="nav-link">Or try the Volumetric MRI Viewer →</a></p>
             </div>
         `;
+        
+        // Add styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .download-instructions {
+                max-width: 550px;
+                padding: 30px;
+                background: rgba(30, 35, 50, 0.95);
+                border-radius: 12px;
+                text-align: left;
+            }
+            .download-instructions h2 {
+                color: #6af;
+                margin-bottom: 15px;
+            }
+            .download-instructions h3 {
+                color: #aaa;
+                margin: 20px 0 10px;
+                font-size: 14px;
+            }
+            .download-instructions p {
+                color: #888;
+                line-height: 1.6;
+            }
+            .download-instructions .error-msg {
+                color: #f66;
+                background: rgba(255,100,100,0.1);
+                padding: 10px;
+                border-radius: 4px;
+                margin-bottom: 15px;
+                font-size: 13px;
+            }
+            .download-instructions ol, .download-instructions ul {
+                color: #ccc;
+                margin-left: 20px;
+                line-height: 1.8;
+            }
+            .download-instructions a {
+                color: #6af;
+            }
+            .download-instructions code {
+                background: #1a1a2a;
+                padding: 2px 6px;
+                border-radius: 3px;
+                font-family: monospace;
+            }
+            .download-instructions .btn-primary {
+                display: inline-block;
+                margin-top: 10px;
+                padding: 8px 16px;
+                background: linear-gradient(135deg, #4a6cf7, #6a8bff);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            .download-instructions .btn-secondary {
+                display: inline-block;
+                padding: 8px 16px;
+                background: #2a2a3a;
+                color: #aaa;
+                border: 1px solid #444;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        `;
+        document.head.appendChild(style);
     }
     
     // Extension points for future features
